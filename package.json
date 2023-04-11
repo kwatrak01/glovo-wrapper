@@ -1,6 +1,6 @@
 {
   "name": "glovo-wrapper",
-  "version": "1.0.2a",
+  "version": "1.0.3",
   "description": "Unofficial glovo courier wrapper",
   "keywords": ["glovo", "wrapper", "api", "courier"],
   "main": "./lib/index.js",
