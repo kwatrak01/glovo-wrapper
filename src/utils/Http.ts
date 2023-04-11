@@ -65,4 +65,5 @@ export enum Endpoints {
   CHECK_IN = 'https://api.glovoapp.com/v3/couriers/scheduling/check_in_info',
   RAPORTS = 'https://api.glovoapp.com/v3/couriers/summary_periods?limit=[LIMIT]&offset=[OFFSET]',
   CALENDAR = 'https://api.glovoapp.com/v3/scheduling/calendar',
+  RAPORT_DETAILS = 'https://api.glovoapp.com/robin/couriers/summary_periods/[RAPORT_ID]',
 }

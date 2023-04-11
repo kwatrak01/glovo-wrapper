@@ -98,6 +98,38 @@ interface ICalendarSlotTag {
   type: string;
 }
 
+interface IRaportDetailDay {
+  deliveries: IRaportDetailDayDelivery[];
+  details: IRAportDetailDayDetail[];
+}
+
+interface IRaportDetailDayDelivery {
+  deliveryId: bigint;
+  firstOrderCancelled: boolean;
+  firstOrderCode: string;
+  id: bigint;
+  isArchived: boolean;
+  multiplier: string | null;
+  orders: IRaportDetailDayDeliveryOrder[];
+  secondOrderCancelled: boolean;
+  secondOrderCode: string | null;
+  startTime: string;
+  tips: string;
+  totalEarnings: string;
+}
+
+interface IRaportDetailDayDeliveryOrder {
+  code: string;
+  status: string;
+}
+
+interface IRAportDetailDayDetail {
+  amount: string;
+  description: string | null;
+  name: string;
+  type: string;
+}
+
 export interface ISWK {
   code: string;
   currency: string;
@@ -169,6 +201,11 @@ export interface ICalendar {
   nextShiftLabel: string | null;
 }
 
+export interface IRaportDetail {
+  containsArchivedDeliveries: boolean;
+  days: IRaportDetailDay[];
+}
+
 export async function getSWKSettings(accessToken: string): Promise<ISWK | IError | undefined> {
   const response = await get<ISWK>(Endpoints.SWK_SETTINGS, accessToken);
   return response.parsedBody;
@@ -213,5 +250,16 @@ export async function getRaports(
 
 export async function getCalendar(accessToken: string): Promise<ICalendar | IError | undefined> {
   const response = await get<ICalendar>(Endpoints.CALENDAR, accessToken);
+  return response.parsedBody;
+}
+
+export async function getRaportDetails(
+  accessToken: string,
+  raportId: bigint,
+): Promise<IRaportDetail | IError | undefined> {
+  const response = await get<IRaportDetail>(
+    Endpoints.RAPORT_DETAILS.replace('[RAPORT_ID]', `${raportId}`),
+    accessToken,
+  );
   return response.parsedBody;
 }
