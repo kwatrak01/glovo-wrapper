@@ -1,3 +1,4 @@
+![Version](https://img.shields.io/github/package-json/v/kwatrak02/glovo-wrapper?style=for-the-badge)
 
 # glovo-wrapper
 
