@@ -52,6 +52,15 @@ export async function post<T>(
   return await http<T>(new Request(path, args));
 }
 
+export async function put<T>(
+  path: string,
+  body: any,
+  token: string | null = null,
+  args: RequestInit = { method: 'put', body: JSON.stringify(body), headers: getHeaders(token) },
+) {
+  return await http<T>(new Request(path, args));
+}
+
 export enum Endpoints {
   OAUTH_AUTHORIZE = 'https://api.glovoapp.com/oauth/token',
   OAUTH_REFRESH = 'https://api.glovoapp.com/oauth/refresh',
@@ -66,4 +75,5 @@ export enum Endpoints {
   RAPORTS = 'https://api.glovoapp.com/v3/couriers/summary_periods?limit=[LIMIT]&offset=[OFFSET]',
   CALENDAR = 'https://api.glovoapp.com/v3/scheduling/calendar',
   RAPORT_DETAILS = 'https://api.glovoapp.com/robin/couriers/summary_periods/[RAPORT_ID]',
+  BOOK_SLOT = 'https://api.glovoapp.com/v3/scheduling/slots/[SLOT_ID]',
 }

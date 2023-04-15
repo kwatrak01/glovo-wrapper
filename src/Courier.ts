@@ -1,4 +1,4 @@
-import { Endpoints, get, IError } from './utils/Http';
+import { Endpoints, get, IError, put } from './utils/Http';
 
 interface IExelenceScoreInfo {
   message: string | null;
@@ -34,7 +34,7 @@ interface IChallenge {
   description: string;
   expiration: string;
   iconId: string;
-  id: bigint;
+  id: number;
   period: string;
   style: string;
   title: string;
@@ -67,26 +67,26 @@ interface IDeliverySummary {
 }
 
 interface IRaport {
-  id: bigint;
+  id: number;
   title: string;
   current: boolean;
   totalEarnings: string;
 }
 
 interface ICalendarDay {
-  date: bigint;
+  date: number;
   name: string;
   slots: ICalendarSlot[];
   zoneVersion: number;
 }
 
 interface ICalendarSlot {
-  duration: bigint;
-  endTime: bigint;
-  id: bigint;
+  duration: number;
+  endTime: number;
+  id: number;
   isInProgress: boolean;
   isUnbookable: boolean;
-  startTime: bigint;
+  startTime: number;
   status: string;
   tags: ICalendarSlotTag[];
 }
@@ -104,10 +104,10 @@ interface IRaportDetailDay {
 }
 
 interface IRaportDetailDayDelivery {
-  deliveryId: bigint;
+  deliveryId: number;
   firstOrderCancelled: boolean;
   firstOrderCode: string;
-  id: bigint;
+  id: number;
   isArchived: boolean;
   multiplier: string | null;
   orders: IRaportDetailDayDeliveryOrder[];
@@ -153,7 +153,7 @@ export interface IMe {
   fidelityScore: number;
   forceNewPassword: boolean;
   formattedExcellenceScore: string;
-  id: bigint;
+  id: number;
   mapTransport: string;
   name: string;
   phoneNumber: IPhoneNumber;
@@ -196,7 +196,7 @@ export interface IRaports {
 export interface ICalendar {
   calendarBlockInfo: string | null;
   countdown: number;
-  currentLocaleTime: bigint;
+  currentLocaleTime: number;
   days: ICalendarDay[];
   nextShiftLabel: string | null;
 }
@@ -204,6 +204,12 @@ export interface ICalendar {
 export interface IRaportDetail {
   containsArchivedDeliveries: boolean;
   days: IRaportDetailDay[];
+}
+
+export enum CalendarSlotStatus {
+  AVAILABLE = 'AVAILABLE',
+  UNAVAILABLE = 'UNAVAILABLE',
+  BOOKED = 'BOOKED',
 }
 
 export async function getSWKSettings(accessToken: string): Promise<ISWK | IError | undefined> {
@@ -255,11 +261,36 @@ export async function getCalendar(accessToken: string): Promise<ICalendar | IErr
 
 export async function getRaportDetails(
   accessToken: string,
-  raportId: bigint,
+  raportId: number,
 ): Promise<IRaportDetail | IError | undefined> {
   const response = await get<IRaportDetail>(
     Endpoints.RAPORT_DETAILS.replace('[RAPORT_ID]', `${raportId}`),
     accessToken,
   );
   return response.parsedBody;
+}
+
+export async function bookSlot(
+  accessToken: string,
+  slotId: number,
+  slotBooked: boolean,
+): Promise<ICalendar | IError | undefined> {
+  const response = await put<ICalendar>(
+    Endpoints.BOOK_SLOT.replace('[SLOT_ID]', `${slotId}`),
+    { booked: slotBooked },
+    accessToken,
+  );
+  return response.parsedBody;
+}
+
+export async function bookSlots(accessToken: string, slotIds: number[], slotBooked: boolean) {
+  const responses: Promise<ICalendar | IError | undefined>[] = await slotIds.map((id, index) => {
+    const delay = index * 1000;
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve(bookSlot(accessToken, id, slotBooked));
+      }, delay);
+    });
+  });
+  return responses;
 }

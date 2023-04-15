@@ -13,7 +13,8 @@ Unofficial glovo courier app API wrapper
 - Deliveries
 - CheckIn method
 - Raports
-- Raport Details - **NEW**
+- Raport Details
+- Booking & Unbooking slot system - **NEW**
 - Calendar & Slots Info
 
 
