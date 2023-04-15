@@ -117,3 +117,5 @@ Return type: **IToken** | **IError** | **undefined**
 | Parameter | Type     | Possible Values | Description                |
 | :-------- | :------- | :------ | :------------------ |
 | `error` | `object` | Error JSON structure | Contains error JSON structure, each error has probably own structure |
+
+[Full documentation](https://github.com/kwatrak02/glovo-wrapper/wiki)

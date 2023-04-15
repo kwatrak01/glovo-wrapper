@@ -66,7 +66,7 @@ interface IDeliverySummary {
   id: number | null;
 }
 
-interface IRaport {
+interface IReport {
   id: number;
   title: string;
   current: boolean;
@@ -98,19 +98,19 @@ interface ICalendarSlotTag {
   type: string;
 }
 
-interface IRaportDetailDay {
-  deliveries: IRaportDetailDayDelivery[];
-  details: IRAportDetailDayDetail[];
+interface IReportDetailDay {
+  deliveries: IReportDetailDayDelivery[];
+  details: IReportDetailDayDetail[];
 }
 
-interface IRaportDetailDayDelivery {
+interface IReportDetailDayDelivery {
   deliveryId: number;
   firstOrderCancelled: boolean;
   firstOrderCode: string;
   id: number;
   isArchived: boolean;
   multiplier: string | null;
-  orders: IRaportDetailDayDeliveryOrder[];
+  orders: IReportDetailDayDeliveryOrder[];
   secondOrderCancelled: boolean;
   secondOrderCode: string | null;
   startTime: string;
@@ -118,12 +118,12 @@ interface IRaportDetailDayDelivery {
   totalEarnings: string;
 }
 
-interface IRaportDetailDayDeliveryOrder {
+interface IReportDetailDayDeliveryOrder {
   code: string;
   status: string;
 }
 
-interface IRAportDetailDayDetail {
+interface IReportDetailDayDetail {
   amount: string;
   description: string | null;
   name: string;
@@ -189,8 +189,8 @@ export interface ICheckIn {
   title: string | null;
 }
 
-export interface IRaports {
-  periodsSummary: IRaport[];
+export interface IReports {
+  periodsSummary: IReport[];
 }
 
 export interface ICalendar {
@@ -201,9 +201,9 @@ export interface ICalendar {
   nextShiftLabel: string | null;
 }
 
-export interface IRaportDetail {
+export interface IReportDetail {
   containsArchivedDeliveries: boolean;
-  days: IRaportDetailDay[];
+  days: IReportDetailDay[];
 }
 
 export enum CalendarSlotStatus {
@@ -239,16 +239,19 @@ export async function getDeliveries(accessToken: string): Promise<IDelivery | IE
 
 export async function checkIn(accessToken: string): Promise<ICheckIn | IError | undefined> {
   const response = await get<ICheckIn>(Endpoints.CHECK_IN, accessToken);
+  if (response.status === 204) {
+    return undefined;
+  }
   return response.parsedBody;
 }
 
-export async function getRaports(
+export async function getReports(
   accessToken: string,
   limit: number = 20,
   offset: number = 0,
-): Promise<IRaports | IError | undefined> {
-  const response = await get<IRaports>(
-    Endpoints.RAPORTS.replace('[LIMIT]', `${limit}`).replace('[OFFSET]', `${offset}`),
+): Promise<IReports | IError | undefined> {
+  const response = await get<IReports>(
+    Endpoints.REPORTS.replace('[LIMIT]', `${limit}`).replace('[OFFSET]', `${offset}`),
     accessToken,
   );
   return response.parsedBody;
@@ -259,12 +262,12 @@ export async function getCalendar(accessToken: string): Promise<ICalendar | IErr
   return response.parsedBody;
 }
 
-export async function getRaportDetails(
+export async function getReportDetails(
   accessToken: string,
-  raportId: number,
-): Promise<IRaportDetail | IError | undefined> {
-  const response = await get<IRaportDetail>(
-    Endpoints.RAPORT_DETAILS.replace('[RAPORT_ID]', `${raportId}`),
+  reportId: number,
+): Promise<IReportDetail | IError | undefined> {
+  const response = await get<IReportDetail>(
+    Endpoints.REPORT_DETAILS.replace('[REPORT_ID]', `${reportId}`),
     accessToken,
   );
   return response.parsedBody;
@@ -284,7 +287,7 @@ export async function bookSlot(
 }
 
 export async function bookSlots(accessToken: string, slotIds: number[], slotBooked: boolean) {
-  const responses: Promise<ICalendar | IError | undefined>[] = await slotIds.map((id, index) => {
+  const responses: Promise<ICalendar | IError | undefined>[] = slotIds.map((id, index) => {
     const delay = index * 1000;
     return new Promise((resolve) => {
       setTimeout(() => {
