@@ -1,5 +1,7 @@
 ![Version](https://img.shields.io/github/package-json/v/kwatrak02/glovo-wrapper?style=for-the-badge)
 
+⚠️ This project currently not supported. There is new Glovo Rider app and new wrapper will appear soon.
+
 # glovo-wrapper
 
 Unofficial glovo courier app API wrapper
